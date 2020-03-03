@@ -172,10 +172,27 @@ template <class T>
 void shellSort(T *a, int n) {
     // TODO: Variable declarations.
     // We need to track *leap* (integer) and we need indices to the cells we are going to compare.
+    int leap;
 
     // TODO: Algorithm body
     // Our leap is the half of the array length (n/2) and while it is greater than 0, we check the
     // array cells.  Every time we process the array, we divide leap by 2 and begin again.
+    leap = n / 2;
+    while (leap > 0) {
+        for (int i = leap; i < n; i ++) {
+            int j = i - leap;
+            while (j >= 0) {
+                int k = j + leap;
+                if (a[j] <= a[k]) {
+                    j--;
+                } else {
+                    swap(a[j], a[k]);
+                    j -= leap;
+                }
+            }
+            leap /= 2;
+        }
+    }
 }
 
 template <class T>
@@ -183,20 +200,45 @@ void quickSort(T *a, int first, int last) {
     // TODO: Variable declarations.
     // We need a T variable to hold the pivot element and we also need indices to the cells we are going
     // to compare.
+    int i, j, middle;
+    T pivot;
 
     // TODO: Algorithm body
     // We obtain the index to the middle element by adding first and last, and then dividing by two. We
     // can now get the value of the pivot element (the one at the middle index).
+    middle = (first + last) / 2;
+    pivot = a[middle];
+
     // Then we duplicate the values of our first and last indices.
+    i = first;
+    j = last;
+
     // Next, while our i index (the first index duplicate) is less than or equals to our j index (the
     // last index duplicate):
     //      We increase our i index while the element on that position is less than the pivot.
     //      We decrease our j index while the element on that position is greater than the pivot.
     //      If index i is less than or equals to index j, we swap the elements at those positions
     //      and then we increment i by 1 and decrement j by 1.
+    do {
+        while (a[i] < pivot) i++;
+        while (a[j] > pivot) j--;
+
+        if (i <= j) {
+            swap(a[i], a[j]);
+            i++;
+            j--;
+        }
+    } while (i <= j);
     // Once we have rearrenged our arrays elements, if index first is less than index j we recursively
     // call quickSort sending the array, first, and j as last.
+    if (first < j) {
+        quickSort(a, first, j);
+    }
+
     // Then, if i is less than last, we recursively call quickSort sending the array, i as first, and last.
+    if (i < last) {
+        quickSort(a, i, last);
+    }
 }
 
 // This function helps us "build" the Max Heap (a complete binary tree) from the T *a array of size n.

@@ -248,18 +248,32 @@ void heapify(T *a, int n, int node) {
     // TODO: Variable declarations.
     // We need to identify the pointer to the node with the greatest value.  We initially set this
     // pointer to the node parameter.
+    int largest = node;
     // We also need pointers to the left and right children of the node.  They are computed as
     // two times node plus one (left) and two times node plus two (right).
+    int left = node * 2 + 1;
+    int right = node * 2 + 2;
 
     // TODO: Algorithm body.
     // We need to check if any of the root's children is greater than the root.
     // If our computed left is less than the size of our array (n) and the element in the left
     // position is larger than the element in the largest position, we set the largest pointer to left.
+    if (left < n && a[left] > a[largest]) {
+        largest = left;
+    }
+
     // Then, if our computed right is less than the size of our array and the element is the right
     // position is larger than the element in the largest position, we set the largest pointer to right.
+    if (right < n && a[right] > a[largest]) {
+        largest = right;
+    }
     // If the pointer to the largest element is different to the pointer to the root element (node), then
     // we swap their values and we recursively call again to heapify sending the array, its size, and the
     // pointer to the largest element as or new root.
+    if (largest != node) {
+        swap(a[largest], a[node]);
+        heapify(a, n, largest);
+    }
 }
 
 template <class T>
@@ -268,11 +282,18 @@ void heapSort(T *a, int n) {
     // We run the heapify algorithm sending as root node pointers from (n/2)-1 to 0; that is, from the
     // middle of the array to the first element.  This will help us "build" the binary tree for the
     // first time.
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(a, n, i);
+    }
     // Once we have the tree, we have the tree, we are sure that we have the largest element in the
     // first cell of our array (index 0).
     // Now, we go in a loop from the last position of our array (n-1) to 0 and we:
     //      Swap the elements in the position [0] with the last unused position in the aray.
     //      Heapify the rest of the array having our root in cell 0.
+    for (int i = n - 1; i >= 0; i--) {
+        swap(a[0], a[n-1]);
+        heapify(a, i, 0);
+    }
 }
 
 template <class T>

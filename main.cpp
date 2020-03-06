@@ -170,11 +170,9 @@ void mergeSort(T *a, int first, int last) {
 
 template <class T>
 void shellSort(T *a, int n) {
-    // TODO: Variable declarations.
     // We need to track *leap* (integer) and we need indices to the cells we are going to compare.
     int leap;
 
-    // TODO: Algorithm body
     // Our leap is the half of the array length (n/2) and while it is greater than 0, we check the
     // array cells.  Every time we process the array, we divide leap by 2 and begin again.
     leap = n / 2;
@@ -197,13 +195,11 @@ void shellSort(T *a, int n) {
 
 template <class T>
 void quickSort(T *a, int first, int last) {
-    // TODO: Variable declarations.
     // We need a T variable to hold the pivot element and we also need indices to the cells we are going
     // to compare.
     int i, j, middle;
     T pivot;
 
-    // TODO: Algorithm body
     // We obtain the index to the middle element by adding first and last, and then dividing by two. We
     // can now get the value of the pivot element (the one at the middle index).
     middle = (first + last) / 2;
@@ -245,7 +241,6 @@ void quickSort(T *a, int first, int last) {
 // The parameter node points to the "root" of our tree.
 template <class T>
 void heapify(T *a, int n, int node) {
-    // TODO: Variable declarations.
     // We need to identify the pointer to the node with the greatest value.  We initially set this
     // pointer to the node parameter.
     int largest = node;
@@ -254,7 +249,6 @@ void heapify(T *a, int n, int node) {
     int left = node * 2 + 1;
     int right = node * 2 + 2;
 
-    // TODO: Algorithm body.
     // We need to check if any of the root's children is greater than the root.
     // If our computed left is less than the size of our array (n) and the element in the left
     // position is larger than the element in the largest position, we set the largest pointer to left.
@@ -278,7 +272,6 @@ void heapify(T *a, int n, int node) {
 
 template <class T>
 void heapSort(T *a, int n) {
-    // TODO: Algorithm body.
     // We run the heapify algorithm sending as root node pointers from (n/2)-1 to 0; that is, from the
     // middle of the array to the first element.  This will help us "build" the binary tree for the
     // first time.
@@ -298,63 +291,108 @@ void heapSort(T *a, int n) {
 
 template <class T>
 void bucketSort(T *a, int n) {
-    // TODO: Variable declarations.
     // We need a vector of class T, of n elements, that will hold the buckets we need to sort our array.
+    vector<T> bucket[n];
 
-    // TODO: Algorithm body.
     // We store each element of our array in their correspondent bucket (n*a[i]).
-    // The, we sort each bucket.  For simplicity, we will use the sort function of the algorithm library,
+    for (int i = 0; i < n; i++) {
+        int j = n * a[i];
+        bucket[j].push_back(a[i]);
+    }
+
+    // Then, we sort each bucket.  For simplicity, we will use the sort function of the algorithm library,
     // sending each buckets begin() and end() properties.
+    for (int i = 0; i < n; i++) {
+        sort(bucket[i].begin(), bucket[i].end());
+    }
     // We retrieve each element from each bucket and store them in order in the array.
+    int index = 0;
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < bucket[i].size(); j++) {
+            a[index++] = bucket[i][j];
+        }
+    }
 }
 
 template <class T>
 void countingSort(T *a, int n) {
-    // TODO: Variable declarations.
     // We need two arrays, one with size maximum value of array a plus 1, and the other the size of the
     // original array to hold the arranged data.
+    T max = getMax(a, n);
+    int count[max + 1];
+    T output[n];
 
-    // TODO: Algorithm body.
     // The count array is used to know how many elements there are of any given index (count[a[i]]), so
     // we initialise its cells to 0 and then we process the a array to count a[i] occurrences
     // (i from 0 to n-1).
+    for (int i = 0; i <= max; i++) count[i] = 0;
+    for (int i = 0; i < n; i++) {
+        count[a[i]]++;
+    }
     // Then we process the count array from 1 to max, accumulating the index count, as in
     // count[i] += count[i -1]
+    for (int i = 1; i < n; i++) {
+        count[i] += count[i -1];
+    }
     // Once we have the count array, we enter a loop for an index having values from n-1 to 0, modifying
     // the output array such that output[count[a[i]]-1] = a[i], and decreasing count[a[i]] by 1.
+    for (int i = 0; i < n; i++) {
+        output[count[a[i]] - 1] = a[i];
+        count[a[i]]--;
+    }
     // Finally, we copy element by element the output array into the a array.
+    for (int i = 0; i < n; i++) {
+        a[i] = output[i];
+    }
 }
 
 template <class T>
 void countingSortForRadix(T *a, int n, int place) {
-    // TODO: Variable declarations.
     // This special version of counting sort always use a ten-elements array (for digits 0..9)
     // We still need an output array of the same size of the a array (n), and a count array of
     // ten elements as stated above.
+    const int max = 10;
+    int count[max];
+    T output[n];
 
-    // TODO: Algorithm body.
     // We initialize our count array cells to 0.
+    for (int i = 0; i < max; i++) count[i] = 0;
     // Then, for every item in our array a, we check for the digit in its "place" place and
     // count it accordingly (count[(a[i]/place) % 10]++)
+    for (int i = 0; i < n; i++) {
+        count[(a[i]/place) % 10]++;
+    }
     // Next we process the count array from 1 to max, accumulating the index count, as in
     // count[i] += count[i - 1]
+    for (int i = 1; i < max; i++) {
+        count[i] += count[i - 1];
+    }
     // Now we enter a loop for an index having values from n-1 to 0, so we fill the output array
     // accordingly to output[count[(a[i] / place) % 10]-1] = a[i], and then decreasing
     // count[(a[i] / place) % 10] by one
+    for (int i = 0; i < n; i++) {
+        output[count[(a[i]/place) % 10] - 1] = a[i];
+        count[(a[i]/place) % 10]--;
+    }
     // Finally, we copy element by element the output array into the a array.
+    for (int i = 0; i < n; i++) {
+        a[i] = output[i];
+    }
 }
 
 template <class T>
 void radixSort(T *a, int n) {
-    // TODO: Variables declaration.
     // We need to know the max value within the a array, so we can know when to stop
     // processing such array.
+    int max = getMax(a, n);
 
-    // TODO: Algorithm body
     // We enter a loop to process digit place by digit place, in a LSD radix sort.  Our loop
     // begins at place 1, will keep working while max/place is greater than 0, and place will
     // increase ten-fold each loop.  Within our loop, we will call radix sort sending the
     // a array, the n size and the current place (1, 10, 100, etc.)
+    for (int place = 1; max / place > 0; place *= 10) {
+        countingSortForRadix(a, n, place);
+    }
 }
 
 int main() {
